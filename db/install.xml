@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<XMLDB PATH="blocks/chatbot/db" VERSION="20250416" COMMENT="XMLDB file for Moodle block_chatbot"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
+>
+  <TABLES>
+    <TABLE NAME="block_chatbot_interactions" COMMENT="Stores user interactions with the chatbot">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course ID"/>
+        <FIELD NAME="question" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="User's question"/>
+        <FIELD NAME="answer" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Chatbot's answer"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time of interaction"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-timecreated" UNIQUE="false" FIELDS="userid, timecreated"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_chatbot_badges" COMMENT="Stores badges earned by users">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID"/>
+        <FIELD NAME="badgetype" TYPE="char" LENGTH="50" NOTNULL="true" SEQUENCE="false" COMMENT="Type of badge (novice, explorer, master)"/>
+        <FIELD NAME="name" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Badge name"/>
+        <FIELD NAME="description" TYPE="text" NOTNULL="true" SEQUENCE="false" COMMENT="Badge description"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time badge was awarded"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="userid-badgetype" UNIQUE="true" FIELDS="userid, badgetype" COMMENT="Each user can have each badge type only once"/>
+      </INDEXES>
+    </TABLE>
+    <TABLE NAME="block_chatbot_uploads" COMMENT="Stores document uploads to Flowise">
+      <FIELDS>
+        <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="true"/>
+        <FIELD NAME="filename" TYPE="char" LENGTH="255" NOTNULL="true" SEQUENCE="false" COMMENT="Name of the uploaded file"/>
+        <FIELD NAME="courseid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Course ID"/>
+        <FIELD NAME="userid" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="User ID who uploaded"/>
+        <FIELD NAME="success" TYPE="int" LENGTH="1" NOTNULL="true" DEFAULT="0" SEQUENCE="false" COMMENT="Whether upload was successful"/>
+        <FIELD NAME="responsedata" TYPE="text" NOTNULL="false" SEQUENCE="false" COMMENT="Response data from Flowise API"/>
+        <FIELD NAME="timecreated" TYPE="int" LENGTH="10" NOTNULL="true" SEQUENCE="false" COMMENT="Time of upload"/>
+      </FIELDS>
+      <KEYS>
+        <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        <KEY NAME="courseid" TYPE="foreign" FIELDS="courseid" REFTABLE="course" REFFIELDS="id"/>
+        <KEY NAME="userid" TYPE="foreign" FIELDS="userid" REFTABLE="user" REFFIELDS="id"/>
+      </KEYS>
+      <INDEXES>
+        <INDEX NAME="filename-courseid" UNIQUE="false" FIELDS="filename, courseid"/>
+      </INDEXES>
+    </TABLE>
+  </TABLES>
+</XMLDB>
